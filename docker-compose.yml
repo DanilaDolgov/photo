@@ -17,6 +17,21 @@ services:
     volumes:
       - ./minio_data:/data
 
+  nginx:
+    image: nginx:latest
+    container_name: booking-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"  # обязательно, чтобы HTTPS работал
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/ssl/certificate:/etc/ssl/certificate:ro  # 🔹 примонтировать системную папку внутрь контейнера
+    depends_on:
+      - web-backend
+    networks:
+      - booking_network
+
 
 
 networks:

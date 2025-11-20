@@ -22,7 +22,7 @@ S3_REGION = os.getenv("S3_REGION")
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 
-DB_PATH = os.getenv("DATABASE_PATH")  # MinIO не строг к региону, но boto3 требует значение
+DB_PATH = os.getenv("DB_PATH")  # MinIO не строг к региону, но boto3 требует значение
 
 # Путь к gallery.html (тот файл, который генерируешь скриптом)
 GALLERY_HTML_PATH = "gallery.html"
