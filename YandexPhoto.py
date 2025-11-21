@@ -3,7 +3,6 @@
 # import json
 # import time
 #
-#
 # def extract_image_url(item):
 #     sizes = item.get("sizes")
 #     try:
@@ -23,23 +22,23 @@
 # base_url = "https://cloud-api.yandex.net/v1/disk/public/resources"
 #
 # urls = [
-#     "https://tanyaname.ru/disk/19-09-2025-dilya-drvmfr",
-#     "https://tanyaname.ru/disk/16-09-2025-tatyana-j4vq0d",
-#     "https://tanyaname.ru/disk/29-06-2025-gleb-i-katerina-j7s5dw",
-#     "https://tanyaname.ru/disk/zvezdy-vbdwmn",
-#     "https://tanyaname.ru/disk/04-06-2025-viktoriya-tdjk96",
-#     "https://tanyaname.ru/disk/1-maya-v9zqgr",
-#     "https://tanyaname.ru/disk/14-03-2025-4-klass-sb38mz",
-#     "https://tanyaname.ru/disk/16-02-2025-16-fevralya-dsswb0",
-#     "https://tanyaname.ru/disk/12-02-2025-egor-i-tatyana-bq325h",
-#     "https://tanyaname.ru/disk/09-02-2025-schuka-ltsqf7",
-#     "https://tanyaname.ru/disk/08-12-2024-dlya-viki-z6gr4b",
-#     "https://tanyaname.ru/disk/06-12-2024-6-dekabrya-krh1xt",
-#     "https://tanyaname.ru/disk/22-11-2024-svet-rodnoy-pesni-q578fc",
-#     "https://tanyaname.ru/disk/03-11-2024-anya-mj3j0v",
-#     "https://tanyaname.ru/disk/18-10-2024-vera-46gpb2",
-#     "https://tanyaname.ru/disk/16-09-2024-siblings-j72sbf",
-#     "https://tanyaname.ru/disk/14-09-2024-fandom-fest-p7z5x8",
+#     "https://tanyaname.ru/disk/19-09-2025-dilya-drvmfr/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/16-09-2025-tatyana-j4vq0d/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/29-06-2025-gleb-i-katerina-j7s5dw/pieces?design_variant=masonry&folder_path=1",
+#     "https://tanyaname.ru/disk/zvezdy-vbdwmn/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/04-06-2025-viktoriya-tdjk96/pieces?design_variant=masonry&folder_path=foto",
+#     "https://tanyaname.ru/disk/1-maya-v9zqgr/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/14-03-2025-4-klass-sb38mz/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/16-02-2025-16-fevralya-dsswb0/pieces?design_variant=masonry&folder_path=1",
+#     "https://tanyaname.ru/disk/12-02-2025-egor-i-tatyana-bq325h/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/09-02-2025-schuka-ltsqf7/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/08-12-2024-dlya-viki-z6gr4b/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/06-12-2024-6-dekabrya-krh1xt/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/22-11-2024-svet-rodnoy-pesni-q578fc/pieces?design_variant=masonry&folder_path=photos-1",
+#     "https://tanyaname.ru/disk/03-11-2024-anya-mj3j0v/pieces?design_variant=masonry&folder_path=anya",
+#     "https://tanyaname.ru/disk/18-10-2024-vera-46gpb2/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/16-09-2024-siblings-j72sbf/pieces?design_variant=masonry&folder_path=photos",
+#     "https://tanyaname.ru/disk/14-09-2024-fandom-fest-p7z5x8/pieces?design_variant=masonry&folder_path=photos",
 #     "https://disk.yandex.ru/d/NMxM1lo88n8AEw",
 #     "https://disk.yandex.ru/d/hAebMUXRgEgdrg",
 #     "https://disk.yandex.ru/d/tSrb-uZU9AQjSg",
@@ -68,13 +67,7 @@
 #
 # image_urls = []
 #
-#
 # def fetch_yandex_folder(public_key, path="/"):
-#     """
-#     Возвращает список preview/sizes для всех файлов в публичной папке Яндекс.Диска (рекурсивно).
-#     public_key: любой публичный URL яндекс-диска (disk.yandex.ru или yadi.sk)
-#     path: путь внутри ресурса, по умолчанию "/"
-#     """
 #     collected = []
 #     limit = 1000
 #     offset = 0
@@ -85,75 +78,83 @@
 #             "path": path,
 #             "limit": limit,
 #             "offset": offset,
-#             # запрашиваем preview и размеры (sizes) — preview предпочтительнее
-#             "fields": "items.name,items.type,items.path,items.preview,items.sizes"
+#             "preview_size": "XL",   # <-- ГЛАВНОЕ!
+#             "fields": "items.name,items.type,items.path,items.preview,items.preview_url"
 #         }
 #
 #         try:
 #             resp = requests.get(base_url, params=params, timeout=20)
+#             print(resp)
 #             resp.raise_for_status()
 #             data = resp.json()
 #         except Exception as e:
-#             print("Ошибка запроса Яндекс.Диск:", e)
+#             print("Ошибка Яндекс:", e)
 #             break
 #
 #         if "_embedded" not in data or "items" not in data["_embedded"]:
 #             break
 #
-#         items = data["_embedded"]["items"]
-#
-#         for item in items:
-#             itype = item.get("type")
-#             if itype == "file":
-#                 url = extract_image_url(item)
+#         for item in data["_embedded"]["items"]:
+#             if item["type"] == "file":
+#                 # preview_url — прямая рабочая ссылка для браузера
+#                 url = item.get("sizes")[-3:-2][0]["url"]
 #                 if url:
 #                     collected.append(url)
-#             elif itype == "dir":
-#                 # рекурсивный заход в подпапку
-#                 subpath = item.get("path", "/")
-#                 # короткая пауза чтобы не бить API подряд
-#                 time.sleep(0.1)
-#                 collected.extend(fetch_yandex_folder(public_key, subpath))
 #
-#         # если вернулось меньше лимита — закончить
-#         if len(items) < limit:
+#             elif item["type"] == "dir":
+#                 time.sleep(0.1)
+#                 collected.extend(fetch_yandex_folder(public_key, item["path"]))
+#
+#
+#         if len(data["_embedded"]["items"]) < limit:
 #             break
+#
 #         offset += limit
 #
 #     return collected
 #
 #
+# def fetch_tanyaname_folder(url):
+#     """Парсит страницу tanyaname.ru/disk/... и собирает ссылки изображений."""
+#     collected = []
+#     try:
+#         resp = requests.get(url + "", timeout=15)
+#         resp.raise_for_status()
+#         soup = BeautifulSoup(resp.text, "html.parser")
+#         for a in soup.find_all("a", {"data-role": "gallery-link"}):
+#             versions = a.get("data-gallery-versions")
+#             if versions:
+#                 try:
+#                     versions_json = json.loads(versions.replace("&quot;", '"'))
+#                     if versions_json:
+#                         src = versions_json[0].get("src")
+#                         if src:
+#                             if src.startswith("//"):
+#                                 src = "https:" + src
+#                             collected.append(src)
+#                 except json.JSONDecodeError:
+#                     continue
+#     except Exception as e:
+#         print("Ошибка при парсинге tanyaname:", e)
+#     return collected
+#
 # for url in urls:
 #     print("Обрабатываю:", url)
-#
-#     if "yandex" not in url and "yadi.sk" not in url:
-#         try:
-#             resp = requests.get(url + "/pieces?design_variant=masonry&folder_path=photos", timeout=15)
-#             soup = BeautifulSoup(resp.text, "html.parser")
-#
-#             for a in soup.find_all("a", {"data-role": "gallery-link"}):
-#                 versions = a.get("data-gallery-versions")
-#                 if versions:
-#                     try:
-#                         versions_json = json.loads(versions.replace("&quot;", '"'))
-#                         if versions_json:
-#                             src = versions_json[0].get("src")
-#                             if src:
-#                                 if src.startswith("//"):
-#                                     src = "https:" + src
-#                                 image_urls.append(src)
-#                     except json.JSONDecodeError:
-#                         continue
-#         except Exception as e:
-#             print("Ошибка при парсинге tanyaname:", e)
-#
-#     else:
+#     if "tanyaname.ru" in url:
+#         previews = fetch_tanyaname_folder(url)
+#         print(f"  найдено в tanyaname: {len(previews)}")
+#         image_urls.extend(previews)
+#     elif "yandex" in url or "yadi.sk" in url:
 #         try:
 #             previews = fetch_yandex_folder(url)
 #             print(f"  найдено в ЯД: {len(previews)}")
 #             image_urls.extend(previews)
 #         except Exception as e:
 #             print("Ошибка обработки Яндекс ссылки:", e)
+#     else:
+#         print("Неизвестный тип ссылки:", url)
+#
+# # Убираем дубликаты и None
 # seen = set()
 # filtered = []
 # for u in image_urls:
@@ -164,18 +165,17 @@
 #         filtered.append(u)
 #
 # image_urls = filtered
-#
 # print(f"Всего уникальных изображений: {len(image_urls)}")
-#
 #
 # images_json = json.dumps(image_urls, ensure_ascii=False)
 #
+# # --- Далее генерация HTML остаётся как ты уже имел ранее ---
 # html = f"""
 # <!DOCTYPE html>
 # <html lang="ru">
 # <head>
 # <meta charset="UTF-8">
-# <title>Ленивая галерея слайд-шоу</title>
+# <title>Галерея слайд-шоу</title>
 # <style>
 # body {{
 #     font-family: Arial, sans-serif;
@@ -257,10 +257,8 @@
 #
 # <script>
 # const allImages = {images_json};
-# let loadedImages = [];  // массив для подгруженных миниатюр (в порядке, как отображаются)
-# const batchSize = 30;
+# let loadedImages = [];
 # let currentIndex = 0;
-# const likedImages = [];
 #
 # const gallery = document.getElementById('gallery');
 # const slideshow = document.getElementById('slideshow');
@@ -270,6 +268,8 @@
 # const nextBtn = document.getElementById('next-btn');
 # const closeBtn = document.getElementById('close-btn');
 # const likeBtn = document.getElementById('like-btn');
+#
+# const batchSize = 30;
 #
 # function loadNextBatch() {{
 #     const start = loadedImages.length;
@@ -284,11 +284,8 @@
 #         gallery.appendChild(img);
 #     }}
 # }}
-#
-# // загружаем первые 30
 # loadNextBatch();
 #
-# // Подгружаем ещё, когда пользователь дойдёт до конца загруженных миниатюр
 # function ensureLoadedFor(index) {{
 #     if (index >= loadedImages.length - 5 && loadedImages.length < allImages.length) {{
 #         loadNextBatch();
@@ -297,7 +294,6 @@
 #
 # function openSlide(index) {{
 #     currentIndex = index;
-#     // если текущий индекс ещё не загружен в loadedImages (редкий случай) — загружаем батч
 #     while (currentIndex >= loadedImages.length && loadedImages.length < allImages.length) {{
 #         loadNextBatch();
 #     }}
@@ -306,48 +302,45 @@
 #     updateLikeCount();
 # }}
 #
-# function closeSlide() {{
-#     slideshow.style.display = 'none';
-# }}
+# function closeSlide() {{ slideshow.style.display = 'none'; }}
+# function nextSlide() {{ currentIndex = (currentIndex + 1) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = allImages[currentIndex]; updateLikeCount(); }}
+# function prevSlide() {{ currentIndex = (currentIndex - 1 + allImages.length) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = allImages[currentIndex]; updateLikeCount(); }}
 #
-# function nextSlide() {{
-#     currentIndex++;
-#     if (currentIndex >= allImages.length) currentIndex = 0; // циклический
-#     ensureLoadedFor(currentIndex);
-#     slideImg.src = allImages[currentIndex];
-#     updateLikeCount();
-# }}
-#
-# function prevSlide() {{
-#     currentIndex = (currentIndex - 1 + allImages.length) % allImages.length;
-#     ensureLoadedFor(currentIndex);
-#     slideImg.src = allImages[currentIndex];
-#     updateLikeCount();
-# }}
-#
-# function likeSlide() {{
+# async function likeSlide() {{
 #     const currentImage = allImages[currentIndex];
-#     if (!likedImages.includes(currentImage)) {{
-#         likedImages.push(currentImage);
-#         // визуальная реакция на лайк: кратковременно изменить фон
-#         likeBtn.style.transform = 'scale(1.1)';
-#         setTimeout(() => likeBtn.style.transform = '', 150);
+#     try {{
+#         const res = await fetch("/like", {{
+#             method: "POST",
+#             headers: {{ "Content-Type": "application/json" }},
+#             body: JSON.stringify({{ url: currentImage }})
+#         }});
+#         const data = await res.json();
+#         updateLikeCount(data.likes);
+#     }} catch(e) {{
+#         console.error("Ошибка при отправке лайка:", e);
 #     }}
-#     updateLikeCount();
-#     console.log('Лайкнутые фото:', likedImages);
+#     likeBtn.style.transform = "scale(1.1)";
+#     setTimeout(() => likeBtn.style.transform = "", 150);
 # }}
 #
-# function updateLikeCount() {{
-#     likeCount.innerText = 'Лайков: ' + likedImages.length;
+# function updateLikeCount(count = null) {{
+#     if (count !== null) {{
+#         likeCount.innerText = "Лайков: " + count;
+#     }} else {{
+#         const currentImage = allImages[currentIndex];
+#         fetch("/liked_photos")
+#             .then(res => res.json())
+#             .then(data => {{
+#                 likeCount.innerText = "Лайков: " + (data[currentImage] || 0);
+#             }});
+#     }}
 # }}
 #
-# // Привязка кнопок
 # nextBtn.addEventListener('click', nextSlide);
 # prevBtn.addEventListener('click', prevSlide);
 # closeBtn.addEventListener('click', closeSlide);
 # likeBtn.addEventListener('click', likeSlide);
 #
-# // Закрытие по Esc и переходы стрелками
 # document.addEventListener('keydown', function(e) {{
 #     if (slideshow.style.display === 'flex') {{
 #         if (e.key === 'ArrowRight') nextSlide();
@@ -356,12 +349,9 @@
 #     }}
 # }});
 #
-# // Подгрузка при скролле страницы (infinite scroll мини-оптимизация)
 # window.addEventListener('scroll', () => {{
 #     const scrollBottom = window.innerHeight + window.scrollY;
-#     if (scrollBottom >= document.body.offsetHeight - 300) {{
-#         if (loadedImages.length < allImages.length) loadNextBatch();
-#     }}
+#     if (scrollBottom >= document.body.offsetHeight - 300) loadNextBatch();
 # }});
 # </script>
 #
@@ -372,13 +362,13 @@
 # with open("gallery.html", "w", encoding="utf-8") as f:
 #     f.write(html)
 #
-# print("Ленивая галерея со слайд-шоу и лайками создана: gallery.html")
-
+# print("Генерация gallery.html завершена.")
 
 import requests
 from bs4 import BeautifulSoup
 import json
 import time
+from urllib.parse import quote
 
 def extract_image_url(item):
     sizes = item.get("sizes")
@@ -455,7 +445,8 @@ def fetch_yandex_folder(public_key, path="/"):
             "path": path,
             "limit": limit,
             "offset": offset,
-            "fields": "items.name,items.type,items.path,items.preview,items.sizes"
+            "preview_size": "XL",
+            "fields": "items.name,items.type,items.path,items.preview,items.preview_url"
         }
 
         try:
@@ -463,33 +454,30 @@ def fetch_yandex_folder(public_key, path="/"):
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
-            print("Ошибка запроса Яндекс.Диск:", e)
+            print("Ошибка Яндекс:", e)
             break
 
         if "_embedded" not in data or "items" not in data["_embedded"]:
             break
 
-        items = data["_embedded"]["items"]
-
-        for item in items:
-            itype = item.get("type")
-            if itype == "file":
-                url = extract_image_url(item)
+        for item in data["_embedded"]["items"]:
+            if item["type"] == "file":
+                url = item.get("sizes")[-3:-2][0]["url"]
                 if url:
                     collected.append(url)
-            elif itype == "dir":
-                subpath = item.get("path", "/")
-                time.sleep(0.1)
-                collected.extend(fetch_yandex_folder(public_key, subpath))
 
-        if len(items) < limit:
+            elif item["type"] == "dir":
+                time.sleep(0.1)
+                collected.extend(fetch_yandex_folder(public_key, item["path"]))
+
+        if len(data["_embedded"]["items"]) < limit:
             break
+
         offset += limit
 
     return collected
 
 def fetch_tanyaname_folder(url):
-    """Парсит страницу tanyaname.ru/disk/... и собирает ссылки изображений."""
     collected = []
     try:
         resp = requests.get(url + "", timeout=15)
@@ -541,9 +529,9 @@ for u in image_urls:
 image_urls = filtered
 print(f"Всего уникальных изображений: {len(image_urls)}")
 
+# --- Генерация HTML с использованием прокси ---
 images_json = json.dumps(image_urls, ensure_ascii=False)
 
-# --- Далее генерация HTML остаётся как ты уже имел ранее ---
 html = f"""
 <!DOCTYPE html>
 <html lang="ru">
@@ -652,7 +640,7 @@ function loadNextBatch() {{
         const url = allImages[i];
         loadedImages.push(url);
         const img = document.createElement('img');
-        img.src = url;
+        img.src = "/proxy?url=" + encodeURIComponent(url);
         img.loading = "lazy";
         img.onclick = () => openSlide(i);
         gallery.appendChild(img);
@@ -671,14 +659,14 @@ function openSlide(index) {{
     while (currentIndex >= loadedImages.length && loadedImages.length < allImages.length) {{
         loadNextBatch();
     }}
-    slideImg.src = allImages[currentIndex];
+    slideImg.src = "/proxy?url=" + encodeURIComponent(allImages[currentIndex]);
     slideshow.style.display = 'flex';
     updateLikeCount();
 }}
 
 function closeSlide() {{ slideshow.style.display = 'none'; }}
-function nextSlide() {{ currentIndex = (currentIndex + 1) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = allImages[currentIndex]; updateLikeCount(); }}
-function prevSlide() {{ currentIndex = (currentIndex - 1 + allImages.length) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = allImages[currentIndex]; updateLikeCount(); }}
+function nextSlide() {{ currentIndex = (currentIndex + 1) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = "/proxy?url=" + encodeURIComponent(allImages[currentIndex]); updateLikeCount(); }}
+function prevSlide() {{ currentIndex = (currentIndex - 1 + allImages.length) % allImages.length; ensureLoadedFor(currentIndex); slideImg.src = "/proxy?url=" + encodeURIComponent(allImages[currentIndex]); updateLikeCount(); }}
 
 async function likeSlide() {{
     const currentImage = allImages[currentIndex];

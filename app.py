@@ -9,6 +9,7 @@ from botocore.client import Config
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 import os
+from io import BytesIO
 
 load_dotenv()  # загружает .env переменные
 
@@ -96,6 +97,18 @@ def upload_to_s3(url, filename):
         return False
 
 # ----------------- РОУТЫ -----------------
+
+@app.route("/proxy")
+def proxy():
+    url = request.args.get("url")
+    if not url:
+        return "Нет URL", 400
+    try:
+        resp = requests.get(url, stream=True)
+        resp.raise_for_status()
+        return send_file(BytesIO(resp.content), mimetype="image/jpeg")
+    except Exception as e:
+        return str(e), 500
 
 @app.route("/like", methods=["POST"])
 def like_photo():
