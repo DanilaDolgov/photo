@@ -40,3 +40,4 @@ networks:
 
 volumes:
   minio_data:
+  data:

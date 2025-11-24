@@ -389,22 +389,22 @@ def extract_image_url(item):
 base_url = "https://cloud-api.yandex.net/v1/disk/public/resources"
 
 urls = [
-    "https://tanyaname.ru/disk/19-09-2025-dilya-drvmfr/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/16-09-2025-tatyana-j4vq0d/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/29-06-2025-gleb-i-katerina-j7s5dw/pieces?design_variant=masonry&folder_path=1",
-    "https://tanyaname.ru/disk/zvezdy-vbdwmn/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/04-06-2025-viktoriya-tdjk96/pieces?design_variant=masonry&folder_path=foto",
-    "https://tanyaname.ru/disk/1-maya-v9zqgr/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/14-03-2025-4-klass-sb38mz/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/16-02-2025-16-fevralya-dsswb0/pieces?design_variant=masonry&folder_path=1",
-    "https://tanyaname.ru/disk/12-02-2025-egor-i-tatyana-bq325h/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/09-02-2025-schuka-ltsqf7/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/08-12-2024-dlya-viki-z6gr4b/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/06-12-2024-6-dekabrya-krh1xt/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/22-11-2024-svet-rodnoy-pesni-q578fc/pieces?design_variant=masonry&folder_path=photos-1",
-    "https://tanyaname.ru/disk/03-11-2024-anya-mj3j0v/pieces?design_variant=masonry&folder_path=anya",
-    "https://tanyaname.ru/disk/18-10-2024-vera-46gpb2/pieces?design_variant=masonry&folder_path=photos",
-    "https://tanyaname.ru/disk/16-09-2024-siblings-j72sbf/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/19-09-2025-dilya-drvmfr/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/16-09-2025-tatyana-j4vq0d/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/29-06-2025-gleb-i-katerina-j7s5dw/pieces?design_variant=masonry&folder_path=1",
+    # "https://tanyaname.ru/disk/zvezdy-vbdwmn/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/04-06-2025-viktoriya-tdjk96/pieces?design_variant=masonry&folder_path=foto",
+    # "https://tanyaname.ru/disk/1-maya-v9zqgr/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/14-03-2025-4-klass-sb38mz/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/16-02-2025-16-fevralya-dsswb0/pieces?design_variant=masonry&folder_path=1",
+    # "https://tanyaname.ru/disk/12-02-2025-egor-i-tatyana-bq325h/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/09-02-2025-schuka-ltsqf7/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/08-12-2024-dlya-viki-z6gr4b/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/06-12-2024-6-dekabrya-krh1xt/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/22-11-2024-svet-rodnoy-pesni-q578fc/pieces?design_variant=masonry&folder_path=photos-1",
+    # "https://tanyaname.ru/disk/03-11-2024-anya-mj3j0v/pieces?design_variant=masonry&folder_path=anya",
+    # "https://tanyaname.ru/disk/18-10-2024-vera-46gpb2/pieces?design_variant=masonry&folder_path=photos",
+    # "https://tanyaname.ru/disk/16-09-2024-siblings-j72sbf/pieces?design_variant=masonry&folder_path=photos",
     "https://tanyaname.ru/disk/14-09-2024-fandom-fest-p7z5x8/pieces?design_variant=masonry&folder_path=photos",
     "https://disk.yandex.ru/d/NMxM1lo88n8AEw",
     "https://disk.yandex.ru/d/hAebMUXRgEgdrg",
@@ -445,8 +445,7 @@ def fetch_yandex_folder(public_key, path="/"):
             "path": path,
             "limit": limit,
             "offset": offset,
-            "preview_size": "XL",
-            "fields": "items.name,items.type,items.path,items.preview,items.preview_url"
+            "fields": "items.name,items.type,items.path"
         }
 
         try:
@@ -462,9 +461,15 @@ def fetch_yandex_folder(public_key, path="/"):
 
         for item in data["_embedded"]["items"]:
             if item["type"] == "file":
-                url = item.get("sizes")[-3:-2][0]["url"]
-                if url:
-                    collected.append(url)
+                file_path = item["path"]
+
+                # сохраняем специальную ссылку для прокси — не протухает!
+                api_url = (
+                    f"https://cloud-api.yandex.net/v1/disk/public/resources/download"
+                    f"?public_key={public_key}&path={file_path}"
+                )
+
+                collected.append(api_url)
 
             elif item["type"] == "dir":
                 time.sleep(0.1)
@@ -476,6 +481,7 @@ def fetch_yandex_folder(public_key, path="/"):
         offset += limit
 
     return collected
+
 
 def fetch_tanyaname_folder(url):
     collected = []
