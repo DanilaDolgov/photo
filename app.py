@@ -23,7 +23,7 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 DB_PATH = os.getenv("DB_PATH")
 GALLERY_HTML_PATH = "gallery.html"
 
-PHOTOS_PER_PAGE = 20  # количество фото на страницу
+PHOTOS_PER_PAGE = 1000  # количество фото на страницу
 
 # ------------------------------------------------------------------------------
 
